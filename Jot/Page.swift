@@ -9,35 +9,37 @@ import Foundation
 import SwiftUI
 import SwiftData
 
-//创建 Page 的结构
 struct Page: Hashable {
     let type: Int
     var color: Color = Color.yellow
 }
 
-//创建 Message 的结构
 @Model
 class Message {
     var text: String
-    var id = UUID()
     var type: Int
     var sequentialID: Int
-    private static var idCounter: Int = 0
+    private static var idCounter: Int {
+        get {
+            return UserDefaults.standard.integer(forKey: "Count")
+        }
+        set {
+            UserDefaults.standard.set(newValue, forKey: "Count")
+        }
+    }
     
     private static func getNextID() -> Int {
             idCounter += 1
             return idCounter
         }
     
-    init(text: String, id: UUID = UUID(), type: Int) {
+    init(text: String, type: Int) {
         self.text = text
-        self.id = id
         self.type = type
         self.sequentialID = Message.getNextID()
     }
 }
 
-// 颜色拓展
 extension Color {
     init(hex: String) {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)

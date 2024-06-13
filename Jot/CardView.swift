@@ -10,7 +10,7 @@ import SwiftData
 
 struct CardView: View {
     @State var page: Page
-    @Binding var scrollID: UUID?
+    @Binding var scrollID: Int?
     
     @Query var messages: [Message]
     
@@ -42,7 +42,7 @@ struct CardView: View {
                                     BubbleView(text: message.text)
                                         .padding(.bottom, 11)
                                         .padding(.horizontal, 11)
-                                        .id(message.id)
+                                        .id(message.sequentialID)
                                 }
                             }
                             .padding(.top, 11)
@@ -65,5 +65,5 @@ struct CardView: View {
 }
 
 #Preview {
-    CardView(page: Page(type: 1), scrollID: .constant(UUID()))
+    CardView(page: Page(type: 1), scrollID: .constant(1))
 }

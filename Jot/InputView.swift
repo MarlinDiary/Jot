@@ -9,9 +9,10 @@ import SwiftUI
 import SwiftData
 
 struct InputView: View {
-    var type: Int
-    @State var text: String = ""
-    @Binding var scrollToBottomID: UUID?
+    @Binding var type: Int
+    var typeFunc: (() -> Void)? = nil
+    @AppStorage("text") var text: String = ""
+    @Binding var scrollToBottomID: Int?
     
     @Environment(\.modelContext) var modelContext
     @Query var messages: [Message]
@@ -40,14 +41,12 @@ struct InputView: View {
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             print("Nothing to Send")
         } else {
+            typeFunc?()
             let message = Message(text: text, type: type)
             modelContext.insert(message)
-            scrollToBottomID = message.id
+            scrollToBottomID = message.sequentialID
         }
-        
-        Task {
             text = ""
-        }
     }
 }
 
@@ -56,7 +55,7 @@ struct InputView: View {
             let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: Message.self, configurations: config)
 
-            return InputView(type: 1, scrollToBottomID: .constant(UUID()))
+        return InputView(type: .constant(1), scrollToBottomID: .constant(1))
                 .modelContainer(container)
         } catch {
             return Text("Failed to create preview: \(error.localizedDescription)")
