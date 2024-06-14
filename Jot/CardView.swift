@@ -51,14 +51,16 @@ struct CardView: View {
                                     proxy.scrollTo(newValue)
                                 }
                             }
+                            .onAppear {
+                                if let lastPosition = messagesFiltered.last?.sequentialID {
+                                    proxy.scrollTo(lastPosition)
+                                }
+                            }
                         }
                     }
-                    .scrollBounceBehavior(.basedOnSize)
-                    .defaultScrollAnchor(.bottom)
+                    //.scrollBounceBehavior(.basedOnSize)
+                    //.defaultScrollAnchor(.bottom)
                 }
-            Rectangle()
-                .stroke(Color("GrayS"), lineWidth: 0)
-                .frame(height: 0.5)
         }
         
     }

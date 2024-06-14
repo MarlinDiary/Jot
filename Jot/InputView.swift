@@ -17,6 +17,8 @@ struct InputView: View {
     @Environment(\.modelContext) var modelContext
     @Query var messages: [Message]
     
+    @FocusState private var amountIsFocused: Bool
+    
     var body: some View {
         ZStack {
             RoundView()
@@ -24,6 +26,10 @@ struct InputView: View {
                 TextField("Enter your text here...", text: $text)
                     .frame(height: 60)
                     .submitLabel(.done)
+                    .focused($amountIsFocused)
+                    .onAppear {
+                        //amountIsFocused = true
+                    }
                 Button {
                     sendAction()
                 } label: {
