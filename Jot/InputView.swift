@@ -10,7 +10,6 @@ import SwiftData
 
 struct InputView: View {
     @Binding var type: Int
-    var typeFunc: (() -> Void)? = nil
     @AppStorage("text") var text: String = ""
     @Binding var scrollToBottomID: Int?
     
@@ -22,9 +21,14 @@ struct InputView: View {
     var body: some View {
         ZStack {
             RoundView()
+                .onTapGesture {
+                    if amountIsFocused == false {
+                        amountIsFocused = true
+                    }
+                }
             HStack {
                 TextField("Enter your text here...", text: $text)
-                    .frame(height: 60)
+                    .tint(.black)
                     .submitLabel(.done)
                     .focused($amountIsFocused)
                     .onAppear {
@@ -47,25 +51,45 @@ struct InputView: View {
         if text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
             print("Nothing to Send")
         } else {
-            typeFunc?()
             let message = Message(text: text, type: type)
             modelContext.insert(message)
             scrollToBottomID = message.sequentialID
         }
-            text = ""
+        text = ""
     }
+    
+    func colorForType(type: Int) -> Color {
+            switch type {
+            case 1:
+                return .red
+            case 2:
+                return .orange
+            case 3:
+                return .yellow
+            case 4:
+                return .green
+            case 5:
+                return .indigo
+            case 6:
+                return .blue
+            case 7:
+                return .purple
+            default:
+                return .gray
+            }
+        }
 }
 
 #Preview {
     do {
-            let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: Message.self, configurations: config)
-
+        
         return InputView(type: .constant(1), scrollToBottomID: .constant(1))
-                .modelContainer(container)
-        } catch {
-            return Text("Failed to create preview: \(error.localizedDescription)")
-        }
+            .modelContainer(container)
+    } catch {
+        return Text("Failed to create preview: \(error.localizedDescription)")
+    }
 }
 
 struct RoundView: View {
@@ -81,6 +105,6 @@ struct RoundView: View {
                 )
                 .stroke(Color("GrayS"), lineWidth: 1)
             )
-            .frame(height: 60)
+            .frame(height: 50)
     }
 }

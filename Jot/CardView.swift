@@ -35,17 +35,16 @@ struct CardView: View {
                         .stroke(Color("GrayS"), lineWidth: 1)
                 }
                 .overlay {
-                    ScrollView {
+                    ScrollView(showsIndicators: false) {
                         ScrollViewReader { proxy in
-                            LazyVStack(alignment: .trailing, spacing: 0) {
+                            LazyVStack(alignment: .trailing, spacing: 10) {
                                 ForEach(messagesFiltered, id: \.id) { message in
                                     BubbleView(text: message.text)
-                                        .padding(.bottom, 11)
-                                        .padding(.horizontal, 11)
+                                        .padding(.horizontal, 10)
                                         .id(message.sequentialID)
                                 }
                             }
-                            .padding(.top, 11)
+                            .padding(.top, 10)
                             .onChange(of: scrollID) { oldValue, newValue in
                                 withAnimation(.spring()) {
                                     proxy.scrollTo(newValue)
@@ -58,6 +57,7 @@ struct CardView: View {
                             }
                         }
                     }
+                    .contentMargins(.bottom, 14.5)
                     //.scrollBounceBehavior(.basedOnSize)
                     //.defaultScrollAnchor(.bottom)
                 }

@@ -12,57 +12,29 @@ struct ContentView: View {
     
     @State var scrollID: Int?
     
-    @AppStorage("Offset") var offset = 0.0
-    
-    @State var currentPage: Int = 1
+    @AppStorage("Page") var currentPage: Int = 1
     
     var body: some View {
         ZStack {
             Color("GrayL")
                 .ignoresSafeArea()
             VStack(spacing: 0) {
-                ScrollViewReader { proxy in
-                    ScrollView(.horizontal) {
-                        ZStack(alignment:.leading) {
-                            HStack(spacing: 0) {
-                                ForEach(pages, id: \.self) { page in
-                                    CardView(page: page, scrollID: $scrollID)
-                                        .padding(.horizontal)
-                                        .frame(width: UIScreen.main.bounds.width)
-                                        .id(page.type)
-                                }
-                            }
-                            GeometryReader {geometry in
-                                Circle()
-                                    .opacity(0)
-                                    .frame(width: 10)
-                                    .onChange(of: geometry.frame(in: .global).minX) { oldValue, newValue in
-                                        offset = -geometry.frame(in: .global).minX
-                                        
-                                    }
-                                
-                                
+                TabView(selection: $currentPage) {
+                            ForEach(pages, id: \.self) { page in
+                                CardView(page: page, scrollID: $scrollID)
+                                    .padding(.horizontal)
+                                    .frame(width: UIScreen.main.bounds.width)
+                                    .tag(page.type)
                             }
                         }
-                    }
-                    .scrollTargetBehavior(.paging)
-                    .scrollIndicators(.hidden)
-                    .onAppear {
-                        let screenWidth = Double(UIScreen.main.bounds.width)
-                        currentPage = max(1, min(7, Int((offset / screenWidth).rounded()) + 1))
-                        proxy.scrollTo(currentPage)
-                    }
-                }
+                        .tabViewStyle(PageTabViewStyle())
+                        .indexViewStyle(PageIndexViewStyle(backgroundDisplayMode: .interactive))
                 
-                InputView(type: $currentPage, typeFunc: {
-                    let screenWidth = Double(UIScreen.main.bounds.width)
-                    currentPage = max(1, min(7, Int((offset / screenWidth).rounded()) + 1))
-                }, scrollToBottomID: $scrollID)
-                    .padding(.bottom)
-                    .padding(.horizontal)
-                    .frame(width: UIScreen.main.bounds.width)
+                InputView(type: $currentPage, scrollToBottomID: $scrollID)
+                .padding(.bottom)
+                .padding(.horizontal)
+                .frame(width: UIScreen.main.bounds.width)
             }
-            //Text("\(offset)" + "page" + "\(currentPage)")
         }
     }
 }
